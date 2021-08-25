@@ -11,6 +11,7 @@ const message = require("express-messages");
 const customId = require("custom-id");
 
 var guser = "";
+var username ="";
 
 app.use(express.json());
 app.post('/user', (req, res) => {
@@ -102,16 +103,17 @@ app.post("/register",function(req,res){
     {
       console.log("Didn't saved");
     }else {
-        Request.find({}, function(err, data) {
-      res.render("second", {requests:data});
-  });
+  //       Request.find({}, function(err, data) {
+  //     res.render("second", {requests:data});
+  // });
+  console.log('user registered');
   }
 });
 });
 
 
 app.post("/login", function(req,res){
-  const username = req.body.username;
+  username = req.body.username;
   const password = req.body.password;
   Customer.findOne({email:username},function(err,foundCustomer){
     if(err){
@@ -146,7 +148,7 @@ app.post("/adminr",function(req,res){
       console.log(err);
     }else {
       // res.render("admin");
-      console.log('registered');
+      console.log('admin registered');
     }
   });
 });
@@ -218,7 +220,7 @@ app.get("/suggestions", (req, res) => {
 
 app.get("/registerstudents",function(req,res){
   Request.find({}, function(err, data) {
-res.render("registerstudents", {requests:data});
+res.render("register", {requests:data});
 });
 });
 app.get("/registerhostelkeeper",function(req,res){
@@ -243,9 +245,9 @@ res.render("feedback", {requests:data});
    });
 
 app.get("/profile",function(req,res){
- const username = guser;
- console.log(guser);
-  Customer.findOne({email:username}, function(err, data) {
+ const usernameprof = username;
+ console.log(usernameprof);
+  Customer.findOne({email:usernameprof}, function(err, data) {
     if (data!==null) {
 console.log(data);
       res.render("profile", {requests:data.request,user:data});
