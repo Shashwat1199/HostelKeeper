@@ -203,19 +203,27 @@ app.post("/requestsinput", function(req,res){
 });
 
 app.get("/admindashboard",function(req,res){
-  res.render("admin");
+  Request.find({}, function(err, data) {
+    res.render("admin", {requests:data});
+    });
 });
 
 app.get("/allot",function(req,res){
-  res.render("allot");
+  Request.find({}, function(err, data) {
+    res.render("allot", {requests:data});
+    });
 });
 
 app.get("/complaints",function(req,res){
-  res.render("complaints");
+  Request.find({}, function(err, data) {
+    res.render("complaints", {requests:data});
+    });
 });
 
 app.get("/suggestions", (req, res) => {
-    res.render('suggestions');
+  Request.find({}, function(err, data) {
+    res.render("suggestions", {requests:data});
+    });
    });
 
 app.get("/registerstudents",function(req,res){
@@ -224,7 +232,9 @@ res.render("registerstudents", {requests:data});
 });
 });
 app.get("/registerhostelkeeper",function(req,res){
-  res.render("registerhostelkeeper");
+  Request.find({}, function(err, data) {
+    res.render("registerhostelkeeper", {requests:data});
+    });
 });
 
 app.get("/requests",function(req,res){
