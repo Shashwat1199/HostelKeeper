@@ -72,7 +72,6 @@ const customerSchema = {
 };
 const Customer = new mongoose.model("Customer",customerSchema);
 
-
 const adminSchema = {
   name:String,
   email:String,
@@ -97,6 +96,7 @@ app.post("/register",function(req,res){
     address:req.body.address,
     request:[]
   });
+
 
   newCustomer.save(function(err){
     if(err)
@@ -154,7 +154,7 @@ app.post("/adminr",function(req,res){
 });
 
 app.post("/adminl", function(req,res){
-  const username = req.body.username;
+  username = req.body.username;
   const password = req.body.password;
   //console.log(username,password);
   Admin.findOne({email:username},function(err,foundAdmin){
@@ -220,7 +220,7 @@ app.get("/suggestions", (req, res) => {
 
 app.get("/registerstudents",function(req,res){
   Request.find({}, function(err, data) {
-res.render("register", {requests:data});
+res.render("registerstudents", {requests:data});
 });
 });
 app.get("/registerhostelkeeper",function(req,res){
