@@ -87,14 +87,17 @@
                     <div class="container">
                       <!-- Makes POST request to /Userlogin route -->
                       <form action="/login" method="POST">
-                        <div class="form-group">
-                          <label for="email">Email</label>
-                          <input type="email" class="form-control" name="username">
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="username">
+                          </div>
+                          <div class="col">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password">
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="password">Password</label>
-                          <input type="password" class="form-control" name="password">
-                        </div>
+                        <br>
                         <button type="submit" class="btn btn-primary">Login</button>
                       </form>
                     </div>
@@ -116,15 +119,17 @@
                   <div class="modal-body">
                     <div class="container">
                       <form action="/adminl" method="POST">
-                        <div class="form-group">
-                          <label for="username">Email</label>
-                          <input type="email" class="form-control" name="username">
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="username">Email</label>
+                            <input type="email" class="form-control" name="username">
+                          </div>
+                          <div class="col">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password">
+                          </div>
                         </div>
-
-                        <div class="form-group">
-                          <label for="password">Password</label>
-                          <input type="password" class="form-control" name="password">
-                        </div>
+                        <br>
                         <button type="submit" class="btn btn-primary">Login</button>
                       </form>
                     </div>
@@ -147,27 +152,35 @@
                     <div class="container">
                       <!-- Makes POST request to /login route -->
                       <form action="/register" method="POST">
-                        <div class="form-group">
-                          <label for="name">Name</label>
-                          <input type="text" class="form-control" name="name" required>
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                          </div>
+                          <div class="col">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="username" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="email">Email</label>
-                          <input type="email" class="form-control" name="username" required>
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="contact">Contact No.</label>
+                            <input type="String" class="form-control" name="contact" required>
+                          </div>
+                          <div class="col">
+                            <label for="password">Password</label>
+                            <input type="number" class="form-control" name="password" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="contact">Contact No.</label>
-                          <input type="String" class="form-control" name="contact" required>
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" name="address" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="password">Password</label>
-                          <input type="number" class="form-control" name="password" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="address">Address</label>
-                          <input type="text" class="form-control" name="address" required>
-                        </div>
-                        <button type="submit" onclick="myFunction()" data-dismiss="modal" class="btn btn-primary">Register</button>
+                        <br>
+                        <button type="submit" onclick="myFunction()" data-dismiss="modal"
+                          class="btn btn-primary">Register</button>
                       </form>
                     </div>
                   </div>
@@ -189,28 +202,34 @@
                     <div class="container">
                       <!-- Makes POST request to /Adminlogin route -->
                       <form action="/adminr" method="POST">
-
-                        <div class="form-group">
-                          <label for="name">Name</label>
-                          <input type="String" class="form-control" name="name" required>
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="name">Name</label>
+                            <input type="String" class="form-control" name="name" required>
+                          </div>
+                          <div class="col">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="username" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="email">Email</label>
-                          <input type="email" class="form-control" name="username" required>
+                        <div class="form-row">
+                          <div class="col"><label for="contact">Contact No.</label>
+                            <input type="number" class="form-control" name="contact" required>
+                          </div>
+                          <div class="col">
+                            <label for="city">City</label>
+                            <input type="navbarDropdown" class="form-control" name="city" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="contact">Contact No.</label>
-                          <input type="number" class="form-control" name="contact" required>
+                        <div class="form-row">
+                          <div class="col">
+                            <label for="password">Password</label>
+                            <input type="number" class="form-control" name="password" required>
+                          </div>
                         </div>
-                        <div class="form-group">
-                          <label for="city">City</label>
-                          <input type="navbarDropdown" class="form-control" name="city" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="password">Password</label>
-                          <input type="number" class="form-control" name="password" required>
-                        </div>
-                        <button type="submit" onclick="myFunction()" data-dismiss="modal" class="btn btn-primary">Register</button>
+                        <br>
+                        <button type="submit" onclick="myFunction()" data-dismiss="modal"
+                          class="btn btn-primary">Register</button>
                       </form>
                     </div>
                   </div>
@@ -364,7 +383,7 @@
     function myFunction() {
       alert("Registered Successfully, you can Login now");
     }
-    </script>
+  </script>
 
 </body>
 
