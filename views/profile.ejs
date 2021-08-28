@@ -152,11 +152,9 @@
                                                 <%= request.worktype %>
                                             </td>
                                             <td>
-                                                <a id="btnSubmit" href="/deletereq" class="text-center"><span class="fa fa-trash"></span></a>
-                                                <!-- <div id="myAlert" class="alert alert-danger collapse" role="alert">
-                                                    <a id="linkClose" href="#" class="close" data-dismiss="alert">&times;</a>
-                                                    <strong>Delete ?</strong>
-                                                  </div> -->
+                                                <form action="/deletereq" method="post">
+                                                    <input type="checkbox" name="checkbox" value="<%=request._id%>" onChange="this.form.submit()">       
+                                                </form>
                                             </td>
                                         </tr>
                                         <% }) %>

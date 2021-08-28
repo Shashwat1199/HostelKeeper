@@ -12,7 +12,9 @@ const customId = require("custom-id");
 const { request } = require("http");
 
 var guser = "";
-var username = "";
+var u_username = "";
+var a_username = "";
+var idfordeletion = "";
 
 app.use(express.json());
 app.post('/user', (req, res) => {
@@ -78,8 +80,7 @@ const customerSchema = {
   password: String,
   name: String,
   address: String,
-  request: Array,
-  // idfordeletion_cust: Array
+  request: Array
 };
 
 //customer model
@@ -129,16 +130,22 @@ app.post("/register", function (req, res) {
 
 
 app.post("/login", function (req, res) {
-  username = req.body.username;
+  u_username = req.body.username;
   const password = req.body.password;
-  Customer.findOne({ email: username }, function (err, foundCustomer) {
+  Customer.findOne({ email: u_username }, function (err, foundCustomer) {
     if (err) {
       console.log(err);
     } else {
       if (foundCustomer) {
         if (foundCustomer.password === password) {
-          Request.find({}, function (err, data) {
-            res.render("second", { requests: data });
+          Customer.findOne({email : u_username}, function (err, data) {
+            if (data !== null) {
+              console.log(data);
+              res.render("second", { requests: data.request, user: data });
+            }
+            else {
+              console.log("there is a error");
+            }
           });
         }
       }
@@ -169,10 +176,10 @@ app.post("/adminr", function (req, res) {
 });
 
 app.post("/adminl", function (req, res) {
-  username = req.body.username;
+  a_username = req.body.username;
   const password = req.body.password;
   //console.log(username,password);
-  Admin.findOne({ email: username }, function (err, foundAdmin) {
+  Admin.findOne({ email: a_username }, function (err, foundAdmin) {
     if (err) {
       console.log(err);
     } else {
@@ -260,29 +267,50 @@ app.get("/registerhostelkeeper", function (req, res) {
 });
 
 app.get("/requests", function (req, res) {
-  Request.find({}, function (err, data) {
-    res.render("requests", { requests: data });
-  });
-});
-app.get("/userdashboard", function (req, res) {
-  Request.find({}, function (err, data) {
-    res.render("second", { requests: data });
-  });
-
-});
-app.get('/feedback', (req, res) => {
-  Request.find({}, function (err, data) {
-    res.render("feedback", { requests: data });
-  });
-});
-
-app.get("/deletereq", function (req, res) {
-  Request.findByIdAndDelete(idfordeletion_req, function (err, data) {
-    if (err) {
-      console.log(err);
+ 
+  Customer.findOne({email : u_username}, function (err, data) {
+    if (data !== null) {
+      console.log(data);
+      res.render("requests", { requests: data.request, user: data });
     }
     else {
-      console.log("deleted -> " + data);
+      console.log("there is a error");
+    }
+  });
+
+});
+app.get("/userdashboard", function (req, res) {
+  const emailtobeused = u_username;
+  Customer.findOne({email : emailtobeused}, function (err, data) {
+    if (data !== null) {
+      console.log(data);
+      res.render("second", { requests: data.request, user: data });
+    }
+    else {
+      console.log("there is a error");
+    }
+  });
+
+  });
+
+app.get('/feedback', (req, res) => {
+  Customer.findOne({email : u_username}, function (err, data) {
+    if (data !== null) {
+      console.log(data);
+      res.render("feedback", { requests: data.request, user: data });
+    }
+    else {
+      console.log("there is a error");
+    }
+  });
+});
+
+app.post("/deletereq", function (req, res) {
+  const checkedItemId = req.body.checkbox;
+
+  Customer.findByIdAndRemove(checkedItemId, function (err) {
+    if (!err) {
+      console.log("Successfully deleted item.");
       res.redirect("/profile");
     }
   });
@@ -290,8 +318,7 @@ app.get("/deletereq", function (req, res) {
 
 
 app.get("/profile", function (req, res) {
-  const usernameprof = username;
-  console.log(usernameprof);
+  const usernameprof = u_username;
   Customer.findOne({ email: usernameprof }, function (err, data) {
     if (data !== null) {
       console.log(data);
@@ -303,14 +330,15 @@ app.get("/profile", function (req, res) {
   });
 });
 
+
 app.get("/Logout", function (req, res) {
-  res.render("home");
+  res.redirect("/");
 });
-app.get("/second", function (req, res) {
-  Request.find({}, function (err, data) {
-    res.render("second", { requests: data });
-  });
-});
+// app.get("/second", function (req, res) {
+//   Customer.find({}, function (err, data) {
+//     res.render("second", { requests: data.request });
+//   });
+// });
 app.listen(3000, function () {
   console.log("Server started on port 3000");
 });
