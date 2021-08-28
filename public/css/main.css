@@ -17,12 +17,14 @@ html {
   scroll-behavior: smooth;
 }
 .content{
-  min-height: 120vh;
-  background-image: url(img/8.jpg);
+  min-height: 150vh;
+  /* background-image: url(img/8.jpg);
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: center center; */
+  background:rgb(255, 240, 240);
 }
+
  /* sidebar option is there at bottom */
  .home{
    width: 100%;

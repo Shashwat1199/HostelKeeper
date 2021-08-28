@@ -9,9 +9,10 @@ const session = require("express-session");
 const expressValidator = require("express-validator");
 const message = require("express-messages");
 const customId = require("custom-id");
+const { request } = require("http");
 
 var guser = "";
-var username ="";
+var username = "";
 
 app.use(express.json());
 app.post('/user', (req, res) => {
@@ -20,8 +21,9 @@ app.post('/user', (req, res) => {
     password: req.body.password,
   }).then(user => res.json(user));
 });
-app.set('view engine','ejs');
-app.use(bodyParser.urlencoded({extended:true
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({
+  extended: true
 }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, 'node_modules')));
@@ -38,92 +40,106 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: true }
 }))
- //Express messages middleware
+//Express messages middleware
 
- app.use(require('connect-flash')());
+app.use(require('connect-flash')());
 app.use(function (req, res, next) {
   res.locals.messages = require('express-messages')(req, res);
   next();
 });
 
-mongoose.connect("mongodb://localhost:27017/HostelKeeperDB",{useNewUrlParser:true,
-                     useCreateIndex:true,
-                     useUnifiedTopology:true,
-                     useFindAndModify:false});
+mongoose.connect("mongodb://localhost:27017/HostelKeeperDB", {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
+});
+
+// request schema
 
 const requestschema = {
-  username:String,
-  date:String,
-  checkin:String,
-  checkout:String,
-  worktype:String
-
+  username: String,
+  date: String,
+  checkin: String,
+  checkout: String,
+  worktype: String,
 }
+
+//request model
+
 const Request = new mongoose.model("Request", requestschema);
 module.exports = mongoose.model('request', requestschema, 'request');
 
+//customer schema
+
 const customerSchema = {
-  email:String,
-  contact:Number,
-  password:String,
-  name:String,
-  address:String,
-  request :Array
+  email: String,
+  contact: Number,
+  password: String,
+  name: String,
+  address: String,
+  request: Array,
+  // idfordeletion_cust: Array
 };
-const Customer = new mongoose.model("Customer",customerSchema);
+
+//customer model
+
+const Customer = new mongoose.model("Customer", customerSchema);
+
+// admin schema
 
 const adminSchema = {
-  name:String,
-  email:String,
-  contact:Number,
-  city:String,
-  password:String
+  name: String,
+  email: String,
+  contact: Number,
+  city: String,
+  password: String
 };
-const Admin = new mongoose.model("Admin",adminSchema);
+
+//admin model
+
+const Admin = new mongoose.model("Admin", adminSchema);
 
 app.use(express.static("public"));
 
-app.get("/", function(req,res){
+app.get("/", function (req, res) {
   res.render("home");
 })
 
-app.post("/register",function(req,res){
+app.post("/register", function (req, res) {
   const newCustomer = new Customer({
-    email:req.body.username,
-    contact:req.body.contact,
-    password:req.body.password,
-    name:req.body.name,
-    address:req.body.address,
-    request:[]
+    email: req.body.username,
+    contact: req.body.contact,
+    password: req.body.password,
+    name: req.body.name,
+    address: req.body.address,
+    // request:[]
   });
 
 
-  newCustomer.save(function(err){
-    if(err)
-    {
+  newCustomer.save(function (err) {
+    if (err) {
       console.log("Didn't saved");
-    }else {
-  //       Request.find({}, function(err, data) {
-  //     res.render("second", {requests:data});
-  // });
-  console.log('user registered');
-  }
-});
+    } else {
+      console.log('user registered');
+      res.redirect("/");
+    }
+  });
 });
 
 
-app.post("/login", function(req,res){
+app.post("/login", function (req, res) {
   username = req.body.username;
   const password = req.body.password;
-  Customer.findOne({email:username},function(err,foundCustomer){
-    if(err){
+  Customer.findOne({ email: username }, function (err, foundCustomer) {
+    if (err) {
       console.log(err);
-    }else{
-      if(foundCustomer){
-        if(foundCustomer.password === password){
-          Request.find({}, function(err, data) {
-        res.render("second", {requests:data});
-    });
+    } else {
+      if (foundCustomer) {
+        if (foundCustomer.password === password) {
+          Request.find({}, function (err, data) {
+            res.render("second", { requests: data });
+          });
         }
       }
     }
@@ -131,7 +147,7 @@ app.post("/login", function(req,res){
 });
 
 
-app.post("/adminr",function(req,res){
+app.post("/adminr", function (req, res) {
   console.log("Hello")
   const newAdmin = new Admin({
 
@@ -142,140 +158,159 @@ app.post("/adminr",function(req,res){
     password: req.body.password
   });
 
-  newAdmin.save(function(err){
-    if(err)
-    {
+  newAdmin.save(function (err) {
+    if (err) {
       console.log(err);
-    }else {
-      // res.render("admin");
+    } else {
+      res.redirect("/");
       console.log('admin registered');
     }
   });
 });
 
-app.post("/adminl", function(req,res){
+app.post("/adminl", function (req, res) {
   username = req.body.username;
   const password = req.body.password;
   //console.log(username,password);
-  Admin.findOne({email:username},function(err,foundAdmin){
-    if(err){
+  Admin.findOne({ email: username }, function (err, foundAdmin) {
+    if (err) {
       console.log(err);
-    }else{
-      if(foundAdmin){
-        if(foundAdmin.password === password){
-          res.render("admin");
+    } else {
+      if (foundAdmin) {
+        if (foundAdmin.password === password) {
+          Request.find({}, function (err, data) {
+            res.render("admin", { requests: data });
+          });
         }
+        else{
+          console.log(err);
+        }
+      }
+      else{
+        console.log("admin not found!")
       }
     }
   });
 });
 
-app.post("/requestsinput", function(req,res){
+app.post("/requestsinput", function (req, res) {
 
-   // console.log(req.body);
+  // console.log(req.body);
   const newrequest = new Request({
-    username:req.body.username,
-    date:req.body.date,
-    checkin:req.body.checkin,
-    checkout:req.body.checkout,
-    worktype:req.body.worktype
+    username: req.body.username,
+    date: req.body.date,
+    checkin: req.body.checkin,
+    checkout: req.body.checkout,
+    worktype: req.body.worktype
   });
   guser = req.body.username;
-  Customer.findOne({email:guser},function(err,user){
+  Customer.findOne({ email: guser }, function (err, user) {
     user.request.push(newrequest);
-    console.log("req added->"+newrequest);
+    console.log("req added->" + newrequest);
+    // idfordeletion = newrequest._id;
     user.save();
-  })
- // var errors = req.validationErrors();
+  });
 
- // if(errors)
- //   console.log("errors");
- newrequest.save(function(err){
-   if(err)
-   {
-     console.log("Didn't saved");
-   }else {
-     res.redirect("profile")
-      }
- });
+  // var errors = req.validationErrors();
 
-
+  // if(errors)
+  //   console.log("errors");
+  newrequest.save(function (err) {
+    if (err) {
+      console.log("Didn't saved");
+    } else {
+      res.redirect("profile");
+    }
+  });
 });
 
-app.get("/admindashboard",function(req,res){
-  Request.find({}, function(err, data) {
-    res.render("admin", {requests:data});
-    });
+app.get("/admindashboard", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("admin", { requests: data });
+  });
 });
 
-app.get("/allot",function(req,res){
-  Request.find({}, function(err, data) {
-    res.render("allot", {requests:data});
-    });
+app.get("/allot", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("allot", { requests: data });
+  });
 });
 
-app.get("/complaints",function(req,res){
-  Request.find({}, function(err, data) {
-    res.render("complaints", {requests:data});
-    });
+app.get("/complaints", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("complaints", { requests: data });
+  });
 });
 
 app.get("/suggestions", (req, res) => {
-  Request.find({}, function(err, data) {
-    res.render("suggestions", {requests:data});
-    });
-   });
-
-app.get("/registerstudents",function(req,res){
-  Request.find({}, function(err, data) {
-res.render("registerstudents", {requests:data});
-});
-});
-app.get("/registerhostelkeeper",function(req,res){
-  Request.find({}, function(err, data) {
-    res.render("registerhostelkeeper", {requests:data});
-    });
+  Request.find({}, function (err, data) {
+    res.render("suggestions", { requests: data });
+  });
 });
 
-app.get("/requests",function(req,res){
-  Request.find({}, function(err, data) {
-res.render("requests", {requests:data});
+app.get("/registerstudents", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("registerstudents", { requests: data });
+  });
 });
+app.get("/registerhostelkeeper", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("registerhostelkeeper", { requests: data });
+  });
 });
-app.get("/userdashboard",function(req,res){
-  Request.find({}, function(err, data) {
-res.render("second", {requests:data});
+
+app.get("/requests", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("requests", { requests: data });
+  });
 });
+app.get("/userdashboard", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("second", { requests: data });
+  });
 
 });
 app.get('/feedback', (req, res) => {
-  Request.find({}, function(err, data) {
-res.render("feedback", {requests:data});
+  Request.find({}, function (err, data) {
+    res.render("feedback", { requests: data });
+  });
 });
-   });
 
-app.get("/profile",function(req,res){
- const usernameprof = username;
- console.log(usernameprof);
-  Customer.findOne({email:usernameprof}, function(err, data) {
-    if (data!==null) {
-console.log(data);
-      res.render("profile", {requests:data.request,user:data});
+app.get("/deletereq", function (req, res) {
+  Request.findByIdAndDelete(idfordeletion_req, function (err, data) {
+    if (err) {
+      console.log(err);
     }
-    else{
+    else {
+      console.log("deleted -> " + data);
+      res.redirect("/profile");
+    }
+  });
+});
+
+
+app.get("/profile", function (req, res) {
+  const usernameprof = username;
+  console.log(usernameprof);
+  Customer.findOne({ email: usernameprof }, function (err, data) {
+    if (data !== null) {
+      console.log(data);
+      res.render("profile", { requests: data.request, user: data });
+    }
+    else {
       console.log("there is a error");
     }
-   });
   });
+});
 
-app.get("/Logout",function(req,res){
+app.get("/Logout", function (req, res) {
   res.render("home");
 });
-app.get("/second",function(req,res){
-  Request.find({}, function(err, data) {
-res.render("second", {requests:data});
+app.get("/second", function (req, res) {
+  Request.find({}, function (err, data) {
+    res.render("second", { requests: data });
+  });
 });
-});
-app.listen(3000,function(){
-    console.log("Server started on port 3000");
+app.listen(3000, function () {
+  console.log("Server started on port 3000");
 });
