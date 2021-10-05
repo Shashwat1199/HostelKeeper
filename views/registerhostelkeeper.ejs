@@ -21,9 +21,9 @@
     <h5 class="text-center mt-4">User ID Number</h5>
     <a href="/admindashboard" class="mt-5">Dashboard</a>
     <a href="/allot">Allot</a>
-    <a href="/complaints">Complaints</a>
-    <a href="/suggestions">Suggestions</a>
-    <a href="/registerstudents">Register Students</a>
+    <a href="/complaints">Complaints&Suggestions</a>
+    <a href="/userrequests">User Requests</a>
+    <!-- <a href="/registerstudents">Register Students</a> -->
     <a href="/registerhostelkeeper" class="active">Register Hostel Keeper</a>
     <a href="/Logout">Logout</a>
   </div>
@@ -49,7 +49,9 @@
             <div class="card bg-light">
               <div class="card-body">
                 <h5 class="card-title">Clean Requests</h5>
-                <h5><%= requests.length %></h5>
+                <h5>
+                  <%= requests.length %>
+                </h5>
                 <p class="card-text">Since Last Week</p>
               </div>
             </div>
@@ -80,55 +82,61 @@
       <div class="row mt-4">
         <div class="col-12 col-sm-12">
 
-          <!-- <div class="card-body">
-            <form action="/requestsinput" method="POST">
+          <!-- <form action="/uploadProfilePicture"
+       enctype="multipart/form-data" method="POST">
 
-              <div class="form-group" <label for="">Name</label>
-                <input type="text" class="form-control" name="contact" placeholder="Name">
-              </div>
+         <span>Upload Profile Picture:</span>
+         <input type="file" name="mypic" required/> <br>
+         <input type="submit" value="submit">
+     </form> -->
 
-              <div class="form-group" <label for="">Contact No.</label>
-                <input type="number" class="form-control" name="contact" placeholder="Contact">
-              </div>
-
-              <div class="form-group" <label for="">Address</label>
-                <input type="Address" class="form-control" name="address" placeholder="Address">
-              </div>
-
-              <div class="form-group" <label for="">ID</label>
-                <input type="upload" class="form-control" name="worktype" placeholder="Aadhar ID,Voter ID etc.">
-              </div>
-              <button class="btn btn-success">Register</button>
-
-            </form>
-          </div> -->
           <div class="card bg-light">
             <div class="card-header d-flex justify-content-between">Register Hostel Keeper</div>
 
             <div class="card-body">
-              <form action="/requestsinput" method="POST">
+
+              <form action="/hkID" method="POST">
                 <div class="form-row">
-                  <div class="col">
-                    <label for="">Name</label>
-                    <input type="text" class="form-control" placeholder="Name" name="name">
+                  <div class="col-6 col-md-6">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="form-control" placeholder="Name" name="name" required>
                   </div>
-                  <div class="col">
-                    <label for="">Contact No.</label>
-                    <input type="number" class="form-control" name="contact" placeholder="Contact">
+                  <div class="col-6 col-md-6">
+                    <label for="phno">Contact No.</label>
+                    <input type="number" id="phno" class="form-control" name="contact" placeholder="Contact" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col-6 col-md-6">
+                    <label for="exampleFormControlSelect1">Select ID type</label>
+                    <select name="category" class="form-control" id="exampleFormControlSelect1">
+                      <option>Aadhaar Card</option>
+                      <option>PAN Card</option>
+                      <option>Passport number</option>
+                      <option>Driving License</option>
+                    </select>
+                  </div>
+                  <div class="col-6 col-md-6">
+                    <label for="iddetail">ID</label>
+                    <input type="idtype" id="iddetail" class="form-control" name="idtype" placeholder="ID details" required>
+                    <!-- <br>
+                    <! <form action="/uploadProfilePicture"
+                 enctype="multipart/form-data" method="POST"> -->
+
+                    <!-- <span>Upload ID</span>
+                   <input type="file" name="hkid" required> <br> -->
+                    <!-- <input type="submit" value="submit"> -->
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="col">
-                    <label for="">Address</label>
-                    <input type="Address" class="form-control" name="address" placeholder="Address">
-                  </div>
-                  <div class="col">
-                    <label for="">ID</label>
-                    <input type="upload" class="form-control" name="worktype" placeholder="Aadhar ID,Voter ID etc.">
+                    <label for="add">Address</label>
+                    <input type="Address" id="add" class="form-control" name="address" placeholder="Address" required>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Register</button>
+                <input type="submit" class="btn btn-success mt-4" value="Register">
               </form>
+              <!-- <button type="submit" class="btn btn-success">Register</button> -->
             </div>
           </div>
         </div>

@@ -6,10 +6,23 @@ const app = express();
 const path = require("path");
 const router = express.Router();
 const session = require("express-session");
-const expressValidator = require("express-validator");
-const message = require("express-messages");
 const customId = require("custom-id");
 const { request } = require("http");
+
+// var multer = require('multer');
+// var fs = require('fs');
+// var storage = multer.diskStorage({
+//   destination: './public/images/uploads/',
+//   filename: (req, file, cb) => {
+//     return cb(null, '$(file.fieldname)_${Date.now()}${path.extname(req.files["image"][0].filename)}')
+//   //   cb(null, file.fieldname + '-' + Date.now()
+//   // +  path.extname(file.originalname));
+//   }
+// });
+//
+// var upload = multer({
+//   storage: storage
+// });
 
 var guser = "";
 var u_username = "";
@@ -57,7 +70,6 @@ mongoose.connect("mongodb://localhost:27017/HostelKeeperDB", {
   useFindAndModify: false
 });
 
-// request schema
 
 const requestschema = {
   username: String,
@@ -101,6 +113,19 @@ const adminSchema = {
 
 const Admin = new mongoose.model("Admin", adminSchema);
 
+//hostelkeepers schema
+const hostelkeepersschema = {
+  name: String,
+  contact: Number,
+  address: String,
+  idtype: String,
+  hkrequests: Array
+};
+
+//hostelkeepers model
+
+const Hostelkeepers = new mongoose.model("Hostelkeepers", hostelkeepersschema);
+
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
@@ -138,7 +163,7 @@ app.post("/login", function (req, res) {
     } else {
       if (foundCustomer) {
         if (foundCustomer.password === password) {
-          Customer.findOne({email : u_username}, function (err, data) {
+          Customer.findOne({ email: u_username }, function (err, data) {
             if (data !== null) {
               console.log(data);
               res.render("second", { requests: data.request, user: data });
@@ -155,7 +180,7 @@ app.post("/login", function (req, res) {
 
 
 app.post("/adminr", function (req, res) {
-  console.log("Hello")
+  // console.log("Hello")
   const newAdmin = new Admin({
 
     name: req.body.name,
@@ -170,7 +195,7 @@ app.post("/adminr", function (req, res) {
       console.log(err);
     } else {
       res.redirect("/");
-      console.log('admin registered');
+      // console.log('admin registered');
     }
   });
 });
@@ -188,12 +213,13 @@ app.post("/adminl", function (req, res) {
           Request.find({}, function (err, data) {
             res.render("admin", { requests: data });
           });
+          
         }
-        else{
+        else {
           console.log(err);
         }
       }
-      else{
+      else {
         console.log("admin not found!")
       }
     }
@@ -213,15 +239,14 @@ app.post("/requestsinput", function (req, res) {
   guser = req.body.username;
   Customer.findOne({ email: guser }, function (err, user) {
     user.request.push(newrequest);
-    console.log("req added->" + newrequest);
+    // console.log("req added->" + newrequest);
     // idfordeletion = newrequest._id;
     user.save();
   });
-
-  // var errors = req.validationErrors();
-
-  // if(errors)
-  //   console.log("errors");
+  // Hostelkeepers.find({},function(err,hk){
+  //   hk.hkrequests.push(newrequest);
+  //   hk.save();
+  // });
   newrequest.save(function (err) {
     if (err) {
       console.log("Didn't saved");
@@ -229,17 +254,50 @@ app.post("/requestsinput", function (req, res) {
       res.redirect("profile");
     }
   });
+
 });
+
+app.post("/hkID", function (req, res) {
+
+  const newhostelkeeper = new Hostelkeepers({
+    name: req.body.name,
+    contact: req.body.contact,
+    address: req.body.address,
+    idtype: req.body.idtype,
+  });
+  // Hostelkeepers.find({},function(err,hk){
+  //   hk.hkrequests.push(newrequest);
+  //   hk.save();
+  // });
+  newhostelkeeper.save(function (err) {
+    if (err) {
+      console.log("Didn't saved");
+    } else {
+      res.redirect("allot");
+    }
+  });
+});
+
+
 
 app.get("/admindashboard", function (req, res) {
   Request.find({}, function (err, data) {
     res.render("admin", { requests: data });
   });
-});
 
+  // Hostelkeepers.find({}, function (err, data) {
+  //   res.render("admin", { workers: data });
+  // });
+
+});
+app.get("/admindashboard",function(req,res){
+  Hostelkeepers.find({}, function (err, data) {
+    res.render("admin", { workers: data });
+  });
+});
 app.get("/allot", function (req, res) {
-  Request.find({}, function (err, data) {
-    res.render("allot", { requests: data });
+  Hostelkeepers.find({}, function (err, data) {
+    res.render("allot", { workers: data });
   });
 });
 
@@ -249,11 +307,6 @@ app.get("/complaints", function (req, res) {
   });
 });
 
-app.get("/suggestions", (req, res) => {
-  Request.find({}, function (err, data) {
-    res.render("suggestions", { requests: data });
-  });
-});
 
 app.get("/registerstudents", function (req, res) {
   Request.find({}, function (err, data) {
@@ -267,10 +320,10 @@ app.get("/registerhostelkeeper", function (req, res) {
 });
 
 app.get("/requests", function (req, res) {
- 
-  Customer.findOne({email : u_username}, function (err, data) {
+
+  Customer.findOne({ email: u_username }, function (err, data) {
     if (data !== null) {
-      console.log(data);
+      // console.log(data);
       res.render("requests", { requests: data.request, user: data });
     }
     else {
@@ -279,11 +332,24 @@ app.get("/requests", function (req, res) {
   });
 
 });
+
+app.get("/userrequests", function (req, res) {
+
+  Request.find({}, function (err, data) {
+    if (data !== null) {
+      res.render("userrequests", { requests: data });
+    }
+    else {
+      console.log("there is a error");
+    }
+  });
+});
+
 app.get("/userdashboard", function (req, res) {
   const emailtobeused = u_username;
-  Customer.findOne({email : emailtobeused}, function (err, data) {
+  Customer.findOne({ email: emailtobeused }, function (err, data) {
     if (data !== null) {
-      console.log(data);
+      // console.log(data);
       res.render("second", { requests: data.request, user: data });
     }
     else {
@@ -291,12 +357,12 @@ app.get("/userdashboard", function (req, res) {
     }
   });
 
-  });
+});
 
-app.get('/feedback', (req, res) => {
-  Customer.findOne({email : u_username}, function (err, data) {
+app.get("/feedback", function (req, res) {
+  Customer.findOne({ email: u_username }, function (err, data) {
     if (data !== null) {
-      console.log(data);
+      // console.log(data);
       res.render("feedback", { requests: data.request, user: data });
     }
     else {
@@ -321,7 +387,7 @@ app.get("/profile", function (req, res) {
   const usernameprof = u_username;
   Customer.findOne({ email: usernameprof }, function (err, data) {
     if (data !== null) {
-      console.log(data);
+      // console.log(data);
       res.render("profile", { requests: data.request, user: data });
     }
     else {
@@ -342,3 +408,4 @@ app.get("/Logout", function (req, res) {
 app.listen(3000, function () {
   console.log("Server started on port 3000");
 });
+
