@@ -1,7 +1,9 @@
 const express = require("express"); //app.js
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"),
+      extend = require('mongoose-schema-extend');
+var Schema = mongoose.Schema;
 const app = express();
 const path = require("path");
 const router = express.Router();
@@ -70,22 +72,39 @@ mongoose.connect("mongodb://localhost:27017/HostelKeeperDB", {
   useFindAndModify: false
 });
 
+// 1st schemaaaaa
 
-const requestschema = {
+var RequestSchema = new Schema({
   username: String,
   date: String,
   checkin: String,
   checkout: String,
   worktype: String,
-}
+},{ collection : 'users', discriminatorKey : '_type' });
+
+var HostelkeeperSchema = RequestSchema.extend({
+  name: String,
+  contact: Number,
+  address: String,
+  idtype: String,
+  hkrequests: Array
+});
 
 //request model
 
-const Request = new mongoose.model("Request", requestschema);
-module.exports = mongoose.model('request', requestschema, 'request');
+const Request = new mongoose.model("Request", RequestSchema);
+module.exports = mongoose.model('request', RequestSchema, 'request');
+const Hostelkeepers = new mongoose.model("Hostelkeepers", HostelkeeperSchema);
+
+// const requestschema = {
+  
+// }
+// const hostelkeepersschema = {
+ 
+// };
 
 //customer schema
-
+// 2nd schemaaaaa
 const customerSchema = {
   email: String,
   contact: Number,
@@ -100,7 +119,7 @@ const customerSchema = {
 const Customer = new mongoose.model("Customer", customerSchema);
 
 // admin schema
-
+// 3rd schemaaaaa
 const adminSchema = {
   name: String,
   email: String,
@@ -114,17 +133,8 @@ const adminSchema = {
 const Admin = new mongoose.model("Admin", adminSchema);
 
 //hostelkeepers schema
-const hostelkeepersschema = {
-  name: String,
-  contact: Number,
-  address: String,
-  idtype: String,
-  hkrequests: Array
-};
+// 4th schemaaaaa
 
-//hostelkeepers model
-
-const Hostelkeepers = new mongoose.model("Hostelkeepers", hostelkeepersschema);
 
 app.use(express.static("public"));
 
@@ -284,17 +294,9 @@ app.get("/admindashboard", function (req, res) {
   Request.find({}, function (err, data) {
     res.render("admin", { requests: data });
   });
-
-  // Hostelkeepers.find({}, function (err, data) {
-  //   res.render("admin", { workers: data });
-  // });
-
 });
-app.get("/admindashboard",function(req,res){
-  Hostelkeepers.find({}, function (err, data) {
-    res.render("admin", { workers: data });
-  });
-});
+
+
 app.get("/allot", function (req, res) {
   Hostelkeepers.find({}, function (err, data) {
     res.render("allot", { workers: data });
